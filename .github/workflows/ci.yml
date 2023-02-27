@@ -1,0 +1,134 @@
+name: CI
+
+on:
+  push:
+    paths:
+      - .github/workflows/ci.yml
+      - src/**
+      - Cargo.lock
+      - Cargo.toml
+  pull_request:
+    paths:
+      - .github/workflows/ci.yml
+      - src/**
+      - Cargo.lock
+      - Cargo.toml
+
+jobs:
+  fmt:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Format check
+        uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --check
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-clippy-${{ hashFiles('**/Cargo.lock') }}
+      - name: Clippy
+        uses: actions-rs/cargo@v1
+        with:
+          command: clippy
+          args: -- --deny warnings
+
+  build:
+    name: build (${{ matrix.job.target }})
+    runs-on: ${{ matrix.job.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - { target: aarch64-apple-darwin, os: macos-latest }
+          - { target: aarch64-pc-windows-msvc, os: windows-latest }
+          - { target: aarch64-unknown-linux-gnu, os: ubuntu-latest }
+          - { target: aarch64-unknown-linux-musl, os: ubuntu-latest }
+          - { target: arm-unknown-linux-gnueabi, os: ubuntu-latest }
+          - { target: arm-unknown-linux-gnueabihf, os: ubuntu-latest }
+          - { target: arm-unknown-linux-musleabi, os: ubuntu-latest }
+          - { target: arm-unknown-linux-musleabihf, os: ubuntu-latest }
+          - { target: armv7-unknown-linux-gnueabi, os: ubuntu-latest }
+          - { target: armv7-unknown-linux-gnueabihf, os: ubuntu-latest }
+          - { target: armv7-unknown-linux-musleabi, os: ubuntu-latest }
+          - { target: armv7-unknown-linux-musleabihf, os: ubuntu-latest }
+          - { target: i686-pc-windows-gnu, os: ubuntu-latest }
+          - { target: i686-pc-windows-msvc, os: windows-latest }
+          - { target: i686-unknown-linux-gnu, os: ubuntu-latest }
+          - { target: i686-unknown-linux-musl, os: ubuntu-latest }
+          - { target: x86_64-apple-darwin, os: macos-latest }
+          - { target: x86_64-pc-windows-gnu, os: ubuntu-latest }
+          - { target: x86_64-pc-windows-msvc, os: windows-latest }
+          - { target: x86_64-unknown-linux-gnu, os: ubuntu-latest }
+          - { target: x86_64-unknown-linux-musl, os: ubuntu-latest }
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-${{ matrix.job.target }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.job.target }}
+          override: true
+          profile: minimal
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: ${{ matrix.job.os == 'ubuntu-latest' }}
+          command: build
+          args: --locked --release --target=${{ matrix.job.target }}
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-cargo-test-${{ hashFiles('**/Cargo.lock') }}
+      - name: Test
+        uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --all-targets --all-features
+
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Audit
+        uses: actions-rs/cargo@v1
+        with:
+          command: audit
