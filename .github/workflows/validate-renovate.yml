@@ -5,6 +5,10 @@ on:
     paths:
       - 'renovate.json'
       - '.github/workflows/validate-renovate.yml'
+  push:
+    paths:
+      - 'renovate.json'
+      - '.github/workflows/validate-renovate.yml'
 
 jobs:
   validate-renovate:
