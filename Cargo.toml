@@ -12,7 +12,7 @@ keywords = ["base64", "base64url"]
 categories = ["command-line-utilities"]
 
 [dependencies]
-clap = { version = "4.1.6", features = ["derive"] }
+clap = { version = "4.1.7", features = ["derive"] }
 octocrab = "0.18.1"
 reqwest = { version = "0.11.14", features = ["json"] }
 serde = { version = "1.0.152", features = ["derive"] }
