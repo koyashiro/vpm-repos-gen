@@ -16,4 +16,4 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
-      - uses: suzuki-shunsuke/github-action-renovate-config-validator@v0.1.2
+      - uses: suzuki-shunsuke/github-action-renovate-config-validator@v0.1.3
