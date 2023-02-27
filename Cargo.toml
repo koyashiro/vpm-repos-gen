@@ -1,0 +1,21 @@
+[package]
+name = "vpm-repos-gen"
+version = "0.1.0"
+authors = ["koyashiro <develop@koyashi.ro>"]
+edition = "2021"
+description = "vpm repos generator"
+readme = "README.md"
+homepage = "https://github.com/koyashiro/vpm-repos-gen"
+repository = "https://github.com/koyashiro/vpm-repos-gen"
+license = "MIT OR Appach-2.0"
+keywords = ["base64", "base64url"]
+categories = ["command-line-utilities"]
+
+[dependencies]
+clap = { version = "4.1.6", features = ["derive"] }
+octocrab = "0.18.1"
+reqwest = { version = "0.11.14", features = ["json"] }
+serde = { version = "1.0.152", features = ["derive"] }
+serde_json = "1.0.93"
+thiserror = "1.0.38"
+tokio = { version = "1.25.0", features = ["rt", "macros", "rt-multi-thread"] }
