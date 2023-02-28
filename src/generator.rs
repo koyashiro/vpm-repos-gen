@@ -31,6 +31,7 @@ impl VpmRepoGenerator {
 
         for repo in repos {
             let Repo { owner, repo } = repo;
+
             let releases = self
                 .octocrab
                 .repos(&owner, &repo)
@@ -40,36 +41,43 @@ impl VpmRepoGenerator {
                 .await?;
 
             for release in releases {
-                let tag = &release.tag_name;
-                let assets = release.assets.iter().filter(|a| a.name == "package.json");
+                let package_json_url = match release
+                    .assets
+                    .into_iter()
+                    .find(|a| a.name == "package.json")
+                {
+                    Some(a) => a.browser_download_url,
+                    None => continue,
+                };
 
-                for asset in assets {
-                    let package_json: PackageJson =
-                        reqwest::get(asset.browser_download_url.to_owned())
-                            .await?
-                            .json()
-                            .await?;
+                let package_json: PackageJson =
+                    reqwest::get(package_json_url).await?.json().await?;
 
-                    if tag != package_json.version() && tag.get(1..) != Some(package_json.version())
-                    {
-                        return Err(Error::InvalidPackageJson);
+                let tag_version = match release.tag_name.parse() {
+                    Ok(v) => v,
+                    Err(_) => continue,
+                };
+
+                if package_json.version() != &tag_version {
+                    return Err(Error::InvalidPackageJson);
+                }
+
+                match packages.get_mut(package_json.name()) {
+                    Some(package) => {
+                        package
+                            .versions
+                            .insert(package_json.version().to_owned(), package_json);
                     }
-
-                    match packages.get_mut(package_json.name()) {
-                        Some(package) => {
-                            package
-                                .versions
-                                .insert(package_json.version().to_string(), package_json);
-                        }
-                        None => {
-                            let mut package = Package {
-                                versions: BTreeMap::new(),
-                            };
-                            let name = package_json.name().to_string();
-                            let version = package_json.version().to_string();
-                            package.versions.insert(version, package_json);
-                            packages.insert(name, package);
-                        }
+                    None => {
+                        let name = package_json.name().to_owned();
+                        let package = Package {
+                            versions: {
+                                let mut map = BTreeMap::new();
+                                map.insert(package_json.version().to_owned(), package_json);
+                                map
+                            },
+                        };
+                        packages.insert(name, package);
                     }
                 }
             }
