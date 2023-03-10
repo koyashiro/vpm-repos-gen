@@ -19,4 +19,7 @@ pub enum Error {
 
     #[error("Invalid repo")]
     InvalidRepo,
+
+    #[error("Invalid release tag")]
+    InvalidReleaseTag,
 }

@@ -2,6 +2,7 @@ mod args;
 mod error;
 mod generator;
 mod package_json;
+mod release_tag;
 mod vpm;
 
 use std::io;

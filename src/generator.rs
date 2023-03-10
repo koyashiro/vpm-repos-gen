@@ -5,6 +5,7 @@ use octocrab::Octocrab;
 use crate::{
     error::Error,
     package_json::PackageJson,
+    release_tag::ReleaseTag,
     vpm::{Package, Packages, Repo, VpmRepo},
 };
 
@@ -53,12 +54,8 @@ impl VpmRepoGenerator {
                 let package_json: PackageJson =
                     reqwest::get(package_json_url).await?.json().await?;
 
-                let tag_version = match release.tag_name.parse() {
-                    Ok(v) => v,
-                    Err(_) => continue,
-                };
-
-                if package_json.version() != &tag_version {
+                let release_tag: ReleaseTag = release.tag_name.parse()?;
+                if package_json.version() != release_tag.as_version() {
                     return Err(Error::InvalidPackageJson);
                 }
 
