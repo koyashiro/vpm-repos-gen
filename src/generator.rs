@@ -69,9 +69,9 @@ impl VpmRepoGenerator {
                         let name = package_json.name().to_owned();
                         let package = Package {
                             versions: {
-                                let mut map = BTreeMap::new();
-                                map.insert(package_json.version().to_owned(), package_json);
-                                map
+                                let mut versions = BTreeMap::new();
+                                versions.insert(package_json.version().to_owned(), package_json);
+                                versions
                             },
                         };
                         packages.insert(name, package);
