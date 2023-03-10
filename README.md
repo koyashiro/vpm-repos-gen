@@ -3,7 +3,7 @@
 ## Installation
 
 ```sh
-cargo install --git https://github.com/koyashiro/vpm-repos-gen
+cargo install --locked --git https://github.com/koyashiro/vpm-repos-gen
 ```
 
 ## Example
