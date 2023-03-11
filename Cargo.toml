@@ -1,6 +1,6 @@
 [package]
 name = "vpm-repos-gen"
-version = "1.0.0"
+version = "1.1.0"
 authors = ["koyashiro <develop@koyashi.ro>"]
 edition = "2021"
 description = "vpm repos generator"
