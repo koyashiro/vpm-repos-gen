@@ -1,7 +1,6 @@
 use std::{collections::BTreeMap, fs::File, io, path::PathBuf};
 
 use thiserror::Error;
-use xdg::{BaseDirectories, BaseDirectoriesError};
 
 use crate::package_json::PackageJson;
 
@@ -29,15 +28,22 @@ pub type ReleaseTags = BTreeMap<ReleaseTag, PackageJson>;
 impl Cache {
     pub const CACHE_FILE: &str = "cache.json";
 
-    pub fn cache_file() -> Result<PathBuf, Error> {
-        let xdg_dirs = BaseDirectories::with_prefix(env!("CARGO_PKG_NAME"))?;
-        let cache_file = xdg_dirs.place_cache_file(Self::CACHE_FILE)?;
+    pub fn cache_dir() -> Result<PathBuf, Error> {
+        let cache_dir = dirs::cache_dir()
+            .ok_or(Error::CacheDir)?
+            .join(env!("CARGO_PKG_NAME"));
+
+        Ok(cache_dir)
+    }
+
+    pub fn cache_file_path() -> Result<PathBuf, Error> {
+        let cache_file = Self::cache_dir()?.join(Self::CACHE_FILE);
 
         Ok(cache_file)
     }
 
     pub fn read() -> Result<Self, Error> {
-        let cache_file = match File::open(Self::cache_file()?) {
+        let cache_file = match File::open(Self::cache_file_path()?) {
             Ok(f) => f,
             Err(_) => return Ok(Default::default()),
         };
@@ -47,7 +53,9 @@ impl Cache {
     }
 
     pub fn save(&self) -> Result<(), Error> {
-        let cache_file = File::create(Self::cache_file()?)?;
+        std::fs::create_dir_all(Self::cache_dir()?)?;
+
+        let cache_file = File::create(Self::cache_file_path()?)?;
         serde_json::to_writer(cache_file, &self.0)?;
 
         Ok(())
@@ -59,8 +67,8 @@ impl Cache {
 pub enum Error {
     #[error("io error")]
     IO(#[from] io::Error),
-    #[error("xdg base directories error")]
-    BaseDirectories(#[from] BaseDirectoriesError),
+    #[error("cache dir error")]
+    CacheDir,
     #[error("serde error")]
     SerdeJson(#[from] serde_json::Error),
 }
