@@ -1,0 +1,89 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: release (${{ matrix.job.target }})
+    runs-on: ${{ matrix.job.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        job:
+          - { target: aarch64-apple-darwin, os: macos-latest }
+          # - { target: aarch64-pc-windows-gnu, os: ubuntu-latest }
+          # - { target: aarch64-pc-windows-msvc, os: windows-latest }
+          - { target: aarch64-unknown-linux-gnu, os: ubuntu-latest }
+          # - { target: aarch64-unknown-linux-musl, os: ubuntu-latest }
+          - { target: x86_64-apple-darwin, os: macos-latest }
+          - { target: x86_64-pc-windows-gnu, os: ubuntu-latest }
+          - { target: x86_64-pc-windows-msvc, os: windows-latest }
+          - { target: x86_64-unknown-linux-gnu, os: ubuntu-latest }
+          # - { target: x86_64-unknown-linux-musl, os: ubuntu-latest }
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Cache
+        uses: actions/cache@v3
+        with:
+          path: |
+            ~/.cargo/bin/
+            ~/.cargo/registry/index/
+            ~/.cargo/registry/cache/
+            ~/.cargo/git/db/
+            target/
+          key: ${{ runner.os }}-${{ matrix.job.target }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          target: ${{ matrix.job.target }}
+          override: true
+          profile: minimal
+      - name: Build
+        uses: actions-rs/cargo@v1
+        with:
+          use-cross: ${{ matrix.job.os == 'ubuntu-latest' }}
+          command: build
+          args: --locked --release --target=${{ matrix.job.target }}
+      - name: Archive
+        id: archive
+        shell: bash
+        run: |
+          # Set $BIN_NAME
+          case ${{ matrix.job.target }} in
+            *-pc-windows-*) BIN_NAME_SUFFIX='.exe' ;;
+            *) BIN_NAME_SUFFIX='' ;;
+          esac
+          BIN_NAME="vpm-repos-gen${BIN_NAME_SUFFIX}"
+
+          cp "target/${{ matrix.job.target }}/release/${BIN_NAME}" .
+
+          # Set $ARCHIVE_PATH
+          RELEASE_VERSION="${GITHUB_REF#refs/tags/v}"
+          ARCHIVE_BASENAME="vpm-repos-gen-${RELEASE_VERSION}-${{ matrix.job.target }}"
+          case ${{ matrix.job.target }} in
+            *-pc-windows-*) ARCHIVE_SUFFIX='.zip' ;;
+            *) ARCHIVE_SUFFIX='.tar.gz' ;;
+          esac
+          ARCHIVE_PATH="${ARCHIVE_BASENAME}${ARCHIVE_SUFFIX}"
+
+          # Create archive
+          case ${{ matrix.job.target }} in
+            *-pc-windows-*) 7z a "${ARCHIVE_PATH}" "${BIN_NAME}" LICENSE-APACHE LICENSE-MIT README.md ;;
+            *) tar -czf "${ARCHIVE_PATH}" "${BIN_NAME}" LICENSE-APACHE LICENSE-MIT README.md ;;
+          esac
+
+          echo "ARCHIVE_PATH=${ARCHIVE_PATH}" >> "$GITHUB_ENV"
+      - name: Publish release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: ${{ env.ARCHIVE_PATH }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
