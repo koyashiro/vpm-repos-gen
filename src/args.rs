@@ -1,6 +1,6 @@
 use clap::Parser;
 
-use crate::vpm::Repo;
+use crate::github_repo::GitHubRepo;
 
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
@@ -15,5 +15,5 @@ pub struct Args {
     pub url: String,
 
     #[arg(long)]
-    pub repos: Vec<Repo>,
+    pub repos: Vec<GitHubRepo>,
 }

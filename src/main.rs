@@ -1,6 +1,6 @@
 mod args;
-mod error;
 mod generator;
+mod github_repo;
 mod package_json;
 mod release_tag;
 mod vpm;
@@ -8,11 +8,12 @@ mod vpm;
 use std::io;
 
 use clap::Parser;
+use generator::GenerateError;
 
-use crate::{args::Args, error::Error, generator::VpmRepoGenerator};
+use crate::{args::Args, generator::VpmRepoGenerator};
 
 #[tokio::main]
-async fn main() -> Result<(), Error> {
+async fn main() -> Result<(), GenerateError> {
     let args = Args::parse();
 
     let octocrab = octocrab::instance();
