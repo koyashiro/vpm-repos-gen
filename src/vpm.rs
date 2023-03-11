@@ -15,7 +15,7 @@ pub struct VpmRepos {
 
 pub type Packages = BTreeMap<Name, Package>;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Default, Serialize, Deserialize)]
 pub struct Package {
     pub versions: Versions,
 }

@@ -7,7 +7,7 @@ use thiserror::Error;
 
 pub use name::{Name, ParseError};
 
-#[derive(Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct PackageJson {
     version: Version,
 

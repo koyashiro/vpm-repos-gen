@@ -1,13 +1,15 @@
-use std::{collections::BTreeMap, sync::Arc};
+use std::{
+    collections::{btree_map::Entry, BTreeMap},
+    sync::Arc,
+};
 
 use octocrab::Octocrab;
 use thiserror::Error;
 
 use crate::{
+    cache::Cache,
     github_repo::GitHubRepo,
-    package_json::PackageJson,
-    release_tag::ReleaseTag,
-    vpm::{Package, Packages, VpmRepos},
+    vpm::{Packages, VpmRepos},
 };
 
 #[derive(Debug, Default)]
@@ -24,6 +26,7 @@ impl VpmRepoGenerator {
 
     pub async fn generate(
         &self,
+        cache: &mut Cache,
         name: impl Into<String>,
         author: impl Into<String>,
         url: impl Into<String>,
@@ -43,44 +46,33 @@ impl VpmRepoGenerator {
                 .await?;
 
             for release in releases {
-                let package_json_url = match release
-                    .assets
-                    .into_iter()
-                    .find(|a| a.name == "package.json")
-                {
-                    Some(a) => a.browser_download_url,
-                    None => continue,
-                };
+                let users = cache.as_mut();
+                let repos = users.entry(owner.to_owned()).or_default();
+                let release_tags = repos.entry(repo.to_owned()).or_default();
 
-                let package_json: PackageJson =
-                    reqwest::get(package_json_url).await?.json().await?;
-
-                let release_tag: ReleaseTag = match release.tag_name.parse() {
-                    Ok(t) => t,
-                    Err(_) => continue,
-                };
-                if package_json.version() != release_tag.as_version() {
-                    return Err(GenerateError::InvalidPackageJson);
-                }
-
-                match packages.get_mut(package_json.name()) {
-                    Some(package) => {
-                        package
-                            .versions
-                            .insert(package_json.version().to_owned(), package_json);
-                    }
-                    None => {
-                        let name = package_json.name().to_owned();
-                        let package = Package {
-                            versions: {
-                                let mut versions = BTreeMap::new();
-                                versions.insert(package_json.version().to_owned(), package_json);
-                                versions
-                            },
+                let package_json = match release_tags.entry(release.tag_name) {
+                    Entry::Vacant(entry) => {
+                        let package_json_url = match release
+                            .assets
+                            .into_iter()
+                            .find(|a| a.name == "package.json")
+                        {
+                            Some(a) => a.browser_download_url,
+                            None => continue,
                         };
-                        packages.insert(name, package);
+
+                        let package_json = reqwest::get(package_json_url).await?.json().await?;
+
+                        entry.insert(package_json)
                     }
-                }
+                    Entry::Occupied(entry) => entry.into_mut(),
+                };
+
+                let package = packages.entry(package_json.name().to_owned()).or_default();
+                package
+                    .versions
+                    .entry(package_json.version().to_owned())
+                    .or_insert(package_json.to_owned());
             }
         }
 
@@ -106,7 +98,4 @@ pub enum GenerateError {
 
     #[error(transparent)]
     SemVer(#[from] semver::Error),
-
-    #[error("Invalid package.json")]
-    InvalidPackageJson,
 }
