@@ -6,7 +6,7 @@ use crate::{
     error::Error,
     package_json::PackageJson,
     release_tag::ReleaseTag,
-    vpm::{Package, Packages, Repo, VpmRepo},
+    vpm::{Package, Packages, Repo, VpmRepos},
 };
 
 #[derive(Debug, Default)]
@@ -27,7 +27,7 @@ impl VpmRepoGenerator {
         author: impl Into<String>,
         url: impl Into<String>,
         repos: Vec<Repo>,
-    ) -> Result<VpmRepo, Error> {
+    ) -> Result<VpmRepos, Error> {
         let mut packages: Packages = BTreeMap::new();
 
         for repo in repos {
@@ -80,7 +80,7 @@ impl VpmRepoGenerator {
             }
         }
 
-        Ok(VpmRepo {
+        Ok(VpmRepos {
             name: name.into(),
             author: author.into(),
             url: url.into(),

@@ -10,7 +10,7 @@ use crate::{
 };
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct VpmRepo {
+pub struct VpmRepos {
     pub name: String,
     pub author: String,
     pub url: String,
