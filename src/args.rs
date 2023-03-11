@@ -14,6 +14,6 @@ pub struct Args {
     #[arg(long)]
     pub url: String,
 
-    #[arg(long)]
+    #[arg(long, value_delimiter = ',')]
     pub repos: Vec<GitHubRepo>,
 }
