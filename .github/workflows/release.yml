@@ -64,6 +64,9 @@ jobs:
           BIN_NAME="vpm-repos-gen${BIN_NAME_SUFFIX}"
 
           cp "target/${{ matrix.job.target }}/release/${BIN_NAME}" .
+          case ${{ matrix.job.target }} in
+            *-pc-windows-*) strip --strip-all "${BIN_NAME}" ;;
+          esac
 
           # Set $ARCHIVE_PATH
           RELEASE_VERSION="${GITHUB_REF#refs/tags/v}"
