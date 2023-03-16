@@ -5,25 +5,7 @@ use thiserror::Error;
 use crate::package_json::PackageJson;
 
 #[derive(Debug, Default)]
-pub struct Cache(Users);
-
-impl AsMut<Users> for Cache {
-    fn as_mut(&mut self) -> &mut Users {
-        &mut self.0
-    }
-}
-
-pub type User = String;
-
-pub type Repo = String;
-
-pub type ReleaseTag = String;
-
-pub type Users = BTreeMap<User, Repos>;
-
-pub type Repos = BTreeMap<Repo, ReleaseTags>;
-
-pub type ReleaseTags = BTreeMap<ReleaseTag, PackageJson>;
+pub struct Cache(BTreeMap<String, BTreeMap<String, BTreeMap<String, PackageJson>>>);
 
 impl Cache {
     pub const CACHE_FILE: &str = "cache.json";
@@ -42,7 +24,7 @@ impl Cache {
         Ok(cache_file)
     }
 
-    pub fn read() -> Result<Self, Error> {
+    pub fn load() -> Result<Self, Error> {
         let cache_file = match File::open(Self::cache_file_path()?) {
             Ok(f) => f,
             Err(_) => return Ok(Default::default()),
@@ -59,6 +41,20 @@ impl Cache {
         serde_json::to_writer(cache_file, &self.0)?;
 
         Ok(())
+    }
+
+    pub fn get(
+        &mut self,
+        owner: impl Into<String>,
+        repo: impl Into<String>,
+        tag_name: impl AsRef<str>,
+    ) -> Option<&PackageJson> {
+        self.0
+            .entry(owner.into())
+            .or_default()
+            .entry(repo.into())
+            .or_default()
+            .get(tag_name.as_ref())
     }
 }
 

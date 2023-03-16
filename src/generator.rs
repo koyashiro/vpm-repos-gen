@@ -1,7 +1,4 @@
-use std::{
-    collections::{btree_map::Entry, BTreeMap},
-    sync::Arc,
-};
+use std::{collections::BTreeMap, sync::Arc};
 
 use octocrab::Octocrab;
 use thiserror::Error;
@@ -46,30 +43,25 @@ impl VpmRepoGenerator {
                 .await?;
 
             for release in releases {
-                let users = cache.as_mut();
-                let repos = users.entry(owner.to_owned()).or_default();
-                let release_tags = repos.entry(repo.to_owned()).or_default();
+                let package_json =
+                    match cache.get(owner.to_owned(), repo.to_owned(), &release.tag_name) {
+                        Some(p) => p.to_owned(),
+                        None => {
+                            let package_json_url = match release
+                                .assets
+                                .into_iter()
+                                .find(|a| a.name == "package.json")
+                            {
+                                Some(a) => a.browser_download_url,
+                                None => continue,
+                            };
+                            reqwest::get(package_json_url).await?.json().await?
+                        }
+                    };
 
-                let package_json = match release_tags.entry(release.tag_name) {
-                    Entry::Vacant(entry) => {
-                        let package_json_url = match release
-                            .assets
-                            .into_iter()
-                            .find(|a| a.name == "package.json")
-                        {
-                            Some(a) => a.browser_download_url,
-                            None => continue,
-                        };
-
-                        let package_json = reqwest::get(package_json_url).await?.json().await?;
-
-                        entry.insert(package_json)
-                    }
-                    Entry::Occupied(entry) => entry.into_mut(),
-                };
-
-                let package = packages.entry(package_json.name().to_owned()).or_default();
-                package
+                packages
+                    .entry(package_json.name().to_owned())
+                    .or_default()
                     .versions
                     .entry(package_json.version().to_owned())
                     .or_insert(package_json.to_owned());

@@ -17,7 +17,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     let octocrab = octocrab::instance();
     let generator = VpmRepoGenerator::new(octocrab);
-    let mut cache = Cache::read()?;
+    let mut cache = Cache::load()?;
 
     let vpm_repos = generator
         .generate(&mut cache, args.name, args.author, args.url, args.repos)
