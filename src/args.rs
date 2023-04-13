@@ -5,13 +5,13 @@ use crate::github_repo::GitHubRepo;
 #[derive(Debug, Parser)]
 #[command(author, version, about, long_about = None)]
 pub struct Args {
-    #[arg(long)]
+    #[arg(long, default_value = "")]
     pub name: String,
 
-    #[arg(long)]
+    #[arg(long, default_value = "")]
     pub author: String,
 
-    #[arg(long)]
+    #[arg(long, default_value = "")]
     pub url: String,
 
     #[arg(long, value_delimiter = ',')]
