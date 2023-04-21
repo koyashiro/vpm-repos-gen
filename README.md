@@ -20,6 +20,7 @@ vpm-repos-gen --name "koyashiro" --author 'koyashiro' --url 'https://vpm.koyashi
   "name": "koyashiro",
   "author": "koyashiro",
   "url": "https://vpm.koyashiro.net/repos.json",
+  "id": "net.koyashiro.vpm",
   "packages": {
     "net.koyashiro.udonexception": {
       "versions": {
