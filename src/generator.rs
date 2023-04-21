@@ -27,6 +27,7 @@ impl VpmRepoGenerator {
         name: impl Into<String>,
         author: impl Into<String>,
         url: impl Into<String>,
+        id: impl Into<String>,
         repos: Vec<GitHubRepo>,
     ) -> Result<VpmRepos, GenerateError> {
         let mut packages: Packages = BTreeMap::new();
@@ -72,6 +73,7 @@ impl VpmRepoGenerator {
             name: name.into(),
             author: author.into(),
             url: url.into(),
+            id: id.into(),
             packages,
         })
     }
