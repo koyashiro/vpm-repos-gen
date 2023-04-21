@@ -10,6 +10,7 @@ pub struct VpmRepos {
     pub name: String,
     pub author: String,
     pub url: String,
+    pub id: String,
     pub packages: Packages,
 }
 

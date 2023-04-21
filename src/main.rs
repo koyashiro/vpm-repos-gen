@@ -20,7 +20,14 @@ async fn main() -> Result<(), anyhow::Error> {
     let mut cache = Cache::load()?;
 
     let vpm_repos = generator
-        .generate(&mut cache, args.name, args.author, args.url, args.repos)
+        .generate(
+            &mut cache,
+            args.name,
+            args.author,
+            args.url,
+            args.id,
+            args.repos,
+        )
         .await?;
 
     cache.save()?;
