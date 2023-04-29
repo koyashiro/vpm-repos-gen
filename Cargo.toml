@@ -12,7 +12,7 @@ keywords = ["base64", "base64url"]
 categories = ["command-line-utilities"]
 
 [dependencies]
-anyhow = "1.0.70"
+anyhow = "1.0.71"
 clap = { version = "4.2.5", features = ["derive", "cargo", "env"] }
 dirs = "5.0.0"
 octocrab = { version = "0.19.0", default-features = false, features = ["rustls-tls"] }
