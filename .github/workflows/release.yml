@@ -55,6 +55,9 @@ jobs:
         uses: dtolnay/rust-toolchain@stable
         with:
           targets: ${{ matrix.job.target }}
+      - name: Install cross
+        run: cargo install --force cross
+        if: runner.os == 'Linux'
       - name: Build
         run: cargo build --locked --release --target=${{ matrix.job.target }}
         if: runner.os != 'Linux'
