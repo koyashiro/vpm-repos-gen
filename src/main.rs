@@ -5,15 +5,9 @@ mod github_repo;
 mod package_json;
 mod vpm;
 
-use std::{fs::File, io};
-
 use clap::Parser;
 
-use crate::{
-    args::{Args, STDIN},
-    cache::Cache,
-    generator::VpmRepoGenerator,
-};
+use crate::{args::Args, cache::Cache, generator::VpmRepoGenerator};
 
 #[tokio::main]
 async fn main() -> Result<(), anyhow::Error> {
@@ -22,6 +16,9 @@ async fn main() -> Result<(), anyhow::Error> {
     let octocrab = octocrab::instance();
     let generator = VpmRepoGenerator::new(octocrab);
     let mut cache = Cache::load()?;
+
+    let writer = args.writer()?;
+    let write_json = args.write_json_fn();
 
     let vpm_repos = generator
         .generate(
@@ -36,12 +33,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     cache.save()?;
 
-    if args.output.as_str() == STDIN {
-        serde_json::to_writer_pretty(io::stdout(), &vpm_repos)?;
-    } else {
-        let f = File::create(&args.output)?;
-        serde_json::to_writer_pretty(f, &vpm_repos)?;
-    }
+    write_json(writer, &vpm_repos)?;
 
     Ok(())
 }
