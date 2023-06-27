@@ -22,4 +22,4 @@ semver = { version = "1.0.17", features = ["serde"] }
 serde = { version = "1.0.164", features = ["derive"] }
 serde_json = { version = "1.0.99", features = ["preserve_order"] }
 thiserror = "1.0.40"
-tokio = { version = "1.28.2", features = ["rt", "macros", "rt-multi-thread"] }
+tokio = { version = "1.29.0", features = ["rt", "macros", "rt-multi-thread"] }
