@@ -13,7 +13,7 @@ categories = ["command-line-utilities"]
 
 [dependencies]
 anyhow = "1.0.71"
-clap = { version = "4.3.8", features = ["derive", "cargo", "env"] }
+clap = { version = "4.3.9", features = ["derive", "cargo", "env"] }
 dirs = "5.0.1"
 octocrab = { version = "0.25.1" }
 regex = "1.8.4"
