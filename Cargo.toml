@@ -15,7 +15,7 @@ categories = ["command-line-utilities"]
 anyhow = "1.0.72"
 clap = { version = "4.3.12", features = ["derive", "cargo", "env"] }
 dirs = "5.0.1"
-octocrab = { version = "0.26.0" }
+octocrab = { version = "0.27.0" }
 regex = "1.9.1"
 reqwest = { version = "0.11.18", default-features = false, features = ["json", "rustls-tls"] }
 semver = { version = "1.0.18", features = ["serde"] }
