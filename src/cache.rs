@@ -8,7 +8,7 @@ use crate::package_json::PackageJson;
 pub struct Cache(BTreeMap<String, BTreeMap<String, BTreeMap<String, PackageJson>>>);
 
 impl Cache {
-    pub const CACHE_FILE: &str = "cache.json";
+    pub const CACHE_FILE: &'static str = "cache.json";
 
     pub fn cache_dir() -> Result<PathBuf, Error> {
         let cache_dir = dirs::cache_dir()
