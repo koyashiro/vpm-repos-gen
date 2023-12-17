@@ -21,5 +21,5 @@ reqwest = { version = "0.11.22", default-features = false, features = ["json", "
 semver = { version = "1.0.20", features = ["serde"] }
 serde = { version = "1.0.193", features = ["derive"] }
 serde_json = { version = "1.0.108", features = ["preserve_order"] }
-thiserror = "1.0.50"
+thiserror = "1.0.51"
 tokio = { version = "1.35.0", features = ["rt", "macros", "rt-multi-thread"] }
