@@ -87,10 +87,10 @@ jobs:
         run: cargo install --force cross
         if: runner.os == 'Linux'
       - name: Build
-        run: cargo build --locked --release --target=${{ matrix.job.target }}
+        run: cargo build --locked --target=${{ matrix.job.target }}
         if: runner.os != 'Linux'
       - name: Build (cross)
-        run: cross build --locked --release --target=${{ matrix.job.target }}
+        run: cross build --locked --target=${{ matrix.job.target }}
         if: runner.os == 'Linux'
 
   test:
