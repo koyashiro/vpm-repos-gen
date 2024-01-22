@@ -51,6 +51,8 @@ jobs:
             ~/.cargo/git/db/
             target/
           key: ${{ runner.os }}-${{ matrix.job.target }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-${{ matrix.job.target }}-cargo-build-
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@stable
         with:
