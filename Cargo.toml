@@ -19,7 +19,7 @@ octocrab = { version = "0.33.2" }
 regex = "1.10.3"
 reqwest = { version = "0.11.23", default-features = false, features = ["json", "rustls-tls"] }
 semver = { version = "1.0.21", features = ["serde"] }
-serde = { version = "1.0.195", features = ["derive"] }
+serde = { version = "1.0.196", features = ["derive"] }
 serde_json = { version = "1.0.111", features = ["preserve_order"] }
 thiserror = "1.0.56"
 tokio = { version = "1.35.1", features = ["rt", "macros", "rt-multi-thread"] }
