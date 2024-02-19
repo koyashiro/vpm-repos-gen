@@ -18,7 +18,7 @@ dirs = "5.0.1"
 octocrab = { version = "0.34.1" }
 regex = "1.10.3"
 reqwest = { version = "0.11.24", default-features = false, features = ["json", "rustls-tls"] }
-semver = { version = "1.0.21", features = ["serde"] }
+semver = { version = "1.0.22", features = ["serde"] }
 serde = { version = "1.0.196", features = ["derive"] }
 serde_json = { version = "1.0.113", features = ["preserve_order"] }
 thiserror = "1.0.57"
