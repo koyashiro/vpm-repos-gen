@@ -79,10 +79,6 @@ jobs:
           key: ${{ runner.os }}-${{ matrix.job.target }}-cargo-build-${{ hashFiles('**/Cargo.lock') }}
           restore-keys: |
             ${{ runner.os }}-${{ matrix.job.target }}-cargo-build-
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@78c6b5541adb5849f5d72d15da722aedb26327ca # stable
-        with:
-          targets: ${{ matrix.job.target }}
       - name: Install cross
         run: cargo install --force cross
         if: runner.os == 'Linux'
