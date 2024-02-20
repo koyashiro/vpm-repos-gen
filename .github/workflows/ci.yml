@@ -80,7 +80,7 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-${{ matrix.job.target }}-cargo-build-
       - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@78c6b5541adb5849f5d72d15da722aedb26327ca # stable
+        uses: dtolnay/rust-toolchain@be73d7920c329f220ce78e0234b8f96b7ae60248 # stable
         with:
           targets: ${{ matrix.job.target }}
       - name: Install cross
