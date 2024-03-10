@@ -96,7 +96,7 @@ jobs:
 
           echo "ARCHIVE_PATH=${ARCHIVE_PATH}" >> "$GITHUB_ENV"
       - name: Publish release
-        uses: softprops/action-gh-release@20e085ccc73308c2c8e43ab8da4f8d7ecbb94d4e # v2.0.1
+        uses: softprops/action-gh-release@d99959edae48b5ffffd7b00da66dcdb0a33a52ee # v2.0.2
         with:
           files: ${{ env.ARCHIVE_PATH }}
         env:
