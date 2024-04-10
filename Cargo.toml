@@ -12,7 +12,7 @@ keywords = ["vpm"]
 categories = ["command-line-utilities"]
 
 [dependencies]
-anyhow = "1.0.81"
+anyhow = "1.0.82"
 clap = { version = "4.5.4", features = ["derive", "cargo", "env"] }
 dirs = "5.0.1"
 octocrab = { version = "0.37.0" }
