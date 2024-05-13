@@ -3,15 +3,18 @@
   "extends": ["config:recommended", ":semanticCommits"],
   "lockFileMaintenance": {
     "enabled": true,
-    "automerge": true
+    "automerge": true,
+    "automergeType": "pr",
+    "automergeStrategy": "squash"
   },
-  "reviewers": ["koyashiro"],
   "packageRules": [
     {
       "matchUpdateTypes": ["minor", "patch"],
       "matchCurrentVersion": "!/^0/",
       "automerge": true,
-      "automergeType": "squash"
+      "automergeType": "pr",
+      "automergeStrategy": "squash"
     }
-  ]
+  ],
+  "reviewers": ["koyashiro"]
 }
