@@ -21,7 +21,7 @@ reqwest = { version = "0.12.4", default-features = false, features = ["json", "r
 semver = { version = "1.0.22", features = ["serde"] }
 serde = { version = "1.0.200", features = ["derive"] }
 serde_json = { version = "1.0.116", features = ["preserve_order"] }
-thiserror = "1.0.59"
+thiserror = "2.0.0"
 tokio = { version = "1.37.0", features = ["rt", "macros", "rt-multi-thread"] }
 
 [profile.release]
