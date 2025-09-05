@@ -4,7 +4,6 @@ use octocrab::Octocrab;
 use thiserror::Error;
 
 use crate::{
-    cache::Cache,
     github_repo::GitHubRepo,
     vpm::{Packages, VpmRepos},
 };
@@ -23,7 +22,6 @@ impl VpmRepoGenerator {
 
     pub async fn generate(
         &self,
-        cache: &mut Cache,
         name: impl Into<String>,
         author: impl Into<String>,
         url: impl Into<String>,
