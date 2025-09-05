@@ -54,6 +54,7 @@ impl VpmRepoGenerator {
                         .json::<PackageJson>()
                         .await?;
 
+
                     packages
                         .entry(package_json.name().to_owned())
                         .or_default()

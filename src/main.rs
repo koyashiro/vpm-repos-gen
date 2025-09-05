@@ -14,19 +14,13 @@ async fn main() -> Result<(), anyhow::Error> {
 
     let octocrab = octocrab::instance();
     let generator = VpmRepoGenerator::new(octocrab);
-   
+
 
     let writer = args.writer()?;
     let write_json = args.write_json_fn();
 
     let vpm_repos = generator
-        .generate(
-            args.name,
-            args.author,
-            args.url,
-            args.id,
-            args.repos,
-        )
+        .generate(args.name, args.author, args.url, args.id, args.repos)
         .await?;
 
     write_json(writer, &vpm_repos)?;
