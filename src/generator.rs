@@ -43,27 +43,24 @@ impl VpmRepoGenerator {
                 .await?;
 
             for release in releases {
-                let package_json = {
-                    let package_json_download_url = match release
-                        .assets
-                        .into_iter()
-                        .find(|a| a.name == "package.json")
-                    {
-                        Some(a) => a.browser_download_url,
-                        None => continue,
-                    };
-                    reqwest::get(package_json_download_url)
+                for package_json_url in release
+                    .assets
+                    .into_iter()
+                    .filter(|a| a.content_type == "application/json")
+                    .map(|a| a.browser_download_url)
+                {
+                    let package_json = reqwest::get(package_json_url)
                         .await?
                         .json::<PackageJson>()
-                        .await?
-                };
+                        .await?;
 
-                packages
-                    .entry(package_json.name().to_owned())
-                    .or_default()
-                    .versions
-                    .entry(package_json.version().to_owned())
-                    .or_insert(package_json.to_owned());
+                    packages
+                        .entry(package_json.name().to_owned())
+                        .or_default()
+                        .versions
+                        .entry(package_json.version().to_owned())
+                        .or_insert(package_json.to_owned());
+                }
             }
         }
 
