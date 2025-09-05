@@ -119,7 +119,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
       - name: Install cargo-audit
-        uses: taiki-e/install-action@e1a30d200aae4e0ccf66283d85c9a89f4dbec29b # v2.58.33
+        uses: taiki-e/install-action@36ef4183e0fbb22f4d6044d1d1f8701c3bd07716 # v2.59.0
         with:
           tool: cargo-audit
       - name: Audit
