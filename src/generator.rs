@@ -4,8 +4,8 @@ use octocrab::Octocrab;
 use thiserror::Error;
 
 use crate::{
-    cache::Cache,
     github_repo::GitHubRepo,
+    package_json::PackageJson,
     vpm::{Packages, VpmRepos},
 };
 
@@ -23,7 +23,6 @@ impl VpmRepoGenerator {
 
     pub async fn generate(
         &self,
-        cache: &mut Cache,
         name: impl Into<String>,
         author: impl Into<String>,
         url: impl Into<String>,
@@ -44,21 +43,20 @@ impl VpmRepoGenerator {
                 .await?;
 
             for release in releases {
-                let package_json =
-                    match cache.get(owner.to_owned(), repo.to_owned(), &release.tag_name) {
-                        Some(p) => p.to_owned(),
-                        None => {
-                            let package_json_url = match release
-                                .assets
-                                .into_iter()
-                                .find(|a| a.name == "package.json")
-                            {
-                                Some(a) => a.browser_download_url,
-                                None => continue,
-                            };
-                            reqwest::get(package_json_url).await?.json().await?
-                        }
+                let package_json = {
+                    let package_json_download_url = match release
+                        .assets
+                        .into_iter()
+                        .find(|a| a.name == "package.json")
+                    {
+                        Some(a) => a.browser_download_url,
+                        None => continue,
                     };
+                    reqwest::get(package_json_download_url)
+                        .await?
+                        .json::<PackageJson>()
+                        .await?
+                };
 
                 packages
                     .entry(package_json.name().to_owned())
