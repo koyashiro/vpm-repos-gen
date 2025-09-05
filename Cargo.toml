@@ -2,7 +2,7 @@
 name = "vpm-repos-gen"
 version = "1.6.2"
 authors = ["koyashiro <develop@koyashi.ro>"]
-edition = "2021"
+edition = "2024"
 description = "vpm repos generator."
 readme = "README.md"
 homepage = "https://github.com/koyashiro/vpm-repos-gen"
