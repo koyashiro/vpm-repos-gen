@@ -1,4 +1,4 @@
-use std::{collections::BTreeMap, sync::Arc};
+use std::collections::BTreeMap;
 
 use octocrab::Octocrab;
 use thiserror::Error;
@@ -11,14 +11,12 @@ use crate::{
 
 #[derive(Debug, Default)]
 pub struct VpmRepoGenerator {
-    octocrab: Arc<Octocrab>,
+    octocrab: Octocrab,
 }
 
 impl VpmRepoGenerator {
-    pub fn new(octocrab: impl Into<Arc<Octocrab>>) -> Self {
-        Self {
-            octocrab: octocrab.into(),
-        }
+    pub fn new(octocrab: Octocrab) -> Self {
+        Self { octocrab }
     }
 
     pub async fn generate(

@@ -4,6 +4,7 @@ use std::{
 };
 
 use clap::Parser;
+use octocrab::Octocrab;
 
 use crate::{github_repo::GitHubRepo, vpm::VpmRepos};
 
@@ -35,6 +36,9 @@ pub struct Args {
 
     #[arg(long, env, overrides_with = "pretty")]
     pub no_pretty: bool,
+
+    #[arg(long, env)]
+    pub github_token: Option<String>,
 }
 
 impl Args {
@@ -51,6 +55,16 @@ impl Args {
             serde_json::to_writer
         } else {
             serde_json::to_writer_pretty
+        }
+    }
+
+    pub fn octocrab(&self) -> Result<Octocrab, octocrab::Error> {
+        if let Some(github_token) = &self.github_token {
+            Octocrab::builder()
+                .personal_token(github_token.clone())
+                .build()
+        } else {
+            Ok(Octocrab::default())
         }
     }
 }
