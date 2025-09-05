@@ -59,7 +59,7 @@ impl Args {
     }
 
     pub fn octocrab(&self) -> Result<Octocrab, octocrab::Error> {
-        if let Some(github_token) = &self.github_token {
+        if let Some(github_token) = self.github_token.as_ref().filter(|s| !s.is_empty()) {
             Octocrab::builder()
                 .personal_token(github_token.clone())
                 .build()
