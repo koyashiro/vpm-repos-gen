@@ -12,7 +12,7 @@ use crate::{args::Args, generator::VpmRepoGenerator};
 async fn main() -> Result<(), anyhow::Error> {
     let args = Args::parse();
 
-    let octocrab = octocrab::instance();
+    let octocrab = args.octocrab()?;
     let generator = VpmRepoGenerator::new(octocrab);
 
     let writer = args.writer()?;
