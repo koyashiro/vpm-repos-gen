@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::package_json::{Name, PackageJson};
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub struct VpmRepos {
     pub name: String,
     pub author: String,
@@ -16,7 +16,7 @@ pub struct VpmRepos {
 
 pub type Packages = BTreeMap<Name, Package>;
 
-#[derive(Clone, Debug, Default, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Default, Serialize, Deserialize)]
 pub struct Package {
     pub versions: Versions,
 }
